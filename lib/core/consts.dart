@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 
+const kTextColor = Color(0xFF535353);
+const kTextLightColor = Color(0xFFACACAC);
+
+const kDefaultPaddin = 20.0;
+
 class AppColors {
   static final Color greenColor = Color(0XFFc4de8c);
   static final Color greenLightColor = Color(0XFFe1edc8);

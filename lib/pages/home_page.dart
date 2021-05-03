@@ -2,12 +2,15 @@ import 'dart:ui';
 
 import 'package:app_book_store/core/consts.dart';
 import 'package:app_book_store/core/flutter_icons.dart';
-import 'package:app_book_store/models/food_model.dart';
+import 'package:app_book_store/core/loading.dart';
+import 'package:app_book_store/models/book_model.dart';
+import 'package:app_book_store/models/user.dart';
+import 'package:app_book_store/pages/cart_page.dart';
 import 'package:app_book_store/pages/detail_page.dart';
-import 'package:app_book_store/widgets/app_clipper.dart';
+import 'package:app_book_store/services/database.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'dart:math' as math;
+
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,148 +18,45 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<FoodModel> foodList = FoodModel.list;
+  List<BookModel> foodList = BookModel.list;
   PageController pageController = PageController(viewportFraction: .8);
   var paddingLeft = 0.0;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: Stack(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.only(top: 10),
-              child: _buildRightSection(),
-            ),
-            // Container(
-            //   color: AppColors.greenColor,
-            //   height: MediaQuery.of(context).size.height,
-            //   width: 60,
-            //   padding: EdgeInsets.only(top: 25),
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //     children: <Widget>[
-            // Container(
-            //   width: 40,
-            //   height: 40,
-            //   margin: EdgeInsets.only(top: 16),
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.all(
-            //       Radius.circular(12),
-            //     ),
-            //     image: DecorationImage(
-            //       image: ExactAssetImage("assets/profile.jpg"),
-            //     ),
-            //   ),
-            // ),
-            // Container(
-            //   width: 40,
-            //   height: 40,
-            //   margin: EdgeInsets.only(bottom: 16),
-            //   decoration: BoxDecoration(
-            //     borderRadius: BorderRadius.all(
-            //       Radius.circular(12),
-            //     ),
-            //     color: Colors.white,
-            //   ),
-            //   child: Center(
-            //     child: Icon(FlutterIcons.menu),
-            //   ),
-            // ),
-            //     ],
-            //   ),
-            // ),
-            // Positioned(
-            //   bottom: 0,
-            //   child: Transform.rotate(
-            //     angle: -math.pi / 2,
-            //     alignment: Alignment.topLeft,
-            //     child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.start,
-            //       children: <Widget>[
-            //         Row(
-            //           children: <Widget>[
-            //             _buildMenu("Vegetables", 0),
-            //             _buildMenu("Chicken", 1),
-            //             _buildMenu("Beef", 2),
-            //             _buildMenu("Thai", 3),
-            //           ],
-            //         ),
-            //         AnimatedContainer(
-            //           duration: Duration(milliseconds: 250),
-            //           margin: EdgeInsets.only(left: paddingLeft),
-            //           width: 150,
-            //           height: 75,
-            //           child: Stack(
-            //             children: <Widget>[
-            //               Align(
-            //                 alignment: Alignment.bottomCenter,
-            //                 child: ClipPath(
-            //                   clipper: AppClipper(),
-            //                   child: Container(
-            //                     width: 150,
-            //                     height: 60,
-            //                     color: AppColors.greenColor,
-            //                   ),
-            //                 ),
-            //               ),
-            //               Align(
-            //                 alignment: Alignment.center,
-            //                 child: Transform.rotate(
-            //                   angle: math.pi / 2,
-            //                   child: Padding(
-            //                     padding: const EdgeInsets.only(right: 40),
-            //                     child: Icon(
-            //                       FlutterIcons.arrow,
-            //                       size: 16,
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ),
-            //             ],
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
-          ],
-        ),
-      ),
-    );
-  }
+    final user = Provider.of<User>(context);
+    return StreamBuilder<UserData>(
+        stream: DatabaseService(uid: user.uid).userData,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            UserData userData = snapshot.data;
 
-  Widget _buildMenu(String menu, int index) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          paddingLeft = index * 150.0;
+            return Scaffold(
+              body: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                child: Stack(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: _buildRightSection(userData),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          } else {
+            return Loading();
+          }
         });
-      },
-      child: Container(
-        width: 150,
-        padding: EdgeInsets.only(top: 16),
-        child: Center(
-          child: Text(
-            menu,
-            style: TextStyle(
-              fontSize: 18,
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
-  Widget _buildRightSection() {
+  Widget _buildRightSection(UserData userData) {
     return Padding(
       padding: const EdgeInsets.only(top: 25),
       child: Column(
         children: <Widget>[
-          _customAppBar(),
+          _customAppBar(userData),
           Expanded(
             child: ListView(
               children: <Widget>[
@@ -272,34 +172,6 @@ class _HomePageState extends State<HomePage> {
             width: 200.0,
             height: 300.0,
           )),
-          // Row(
-          //   children: <Widget>[
-          //     RatingBar(
-          //       initialRating: 3,
-          //       minRating: 1,
-          //       direction: Axis.horizontal,
-          //       allowHalfRating: true,
-          //       itemCount: 5,
-          //       itemSize: 12,
-          //       unratedColor: Colors.black12,
-          //       itemPadding: EdgeInsets.symmetric(horizontal: 1.0),
-          //       itemBuilder: (context, _) => Icon(
-          //         Icons.star,
-          //         color: Colors.black,
-          //       ),
-          //       onRatingUpdate: (rating) {
-          //         print(rating);
-          //       },
-          //     ),
-          //     SizedBox(width: 10),
-          //     Text(
-          //       "(120 Reviews)",
-          //       style: TextStyle(
-          //         fontSize: 12,
-          //       ),
-          //     ),
-          //   ],
-          // ),
           Text(
             "${foodList[index].name}",
             style: TextStyle(
@@ -373,12 +245,6 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ),
                         SizedBox(width: 16),
-                        // Text(
-                        //   "(${foodList[index].weight.toInt()}gm Weight)",
-                        //   style: TextStyle(
-                        //     fontSize: 12,
-                        //   ),
-                        // ),
                       ],
                     ),
                   ],
@@ -391,7 +257,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _customAppBar() {
+  Widget _customAppBar(UserData userData) {
     return Container(
       padding: EdgeInsets.all(16),
       child: Row(
@@ -402,7 +268,7 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(color: Colors.black),
               children: [
                 TextSpan(
-                  text: "Shailee Weedly",
+                  text: userData.firstName,
                   style: TextStyle(
                     color: AppColors.brownColor,
                     fontWeight: FontWeight.bold,
@@ -441,21 +307,36 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           SizedBox(width: 16),
-          Container(
-            padding: EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(12),
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => Purchase(),
+                ),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(12),
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  FlutterIconsHome.shop,
+                  size: 16,
+                ),
               ),
             ),
-            child: Center(
-              child: Icon(
-                FlutterIconsHome.shop,
-                size: 16,
-              ),
-            ),
-          )
+          ),
+          // RaisedButton(
+          //   onPressed: () async {
+          //     await _auth.signOut();
+          //   },
+          //   child: new Text('LogOut'),
+          // )
         ],
       ),
     );

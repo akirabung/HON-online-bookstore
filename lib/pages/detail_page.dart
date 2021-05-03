@@ -1,11 +1,17 @@
-import 'package:app_food_delivery/core/consts.dart';
-import 'package:app_food_delivery/core/flutter_icons.dart';
-import 'package:app_food_delivery/models/food_model.dart';
+import 'package:app_book_store/core/consts.dart';
+import 'package:app_book_store/core/flutter_icons.dart';
+import 'package:app_book_store/models/book_model.dart';
 import 'package:flutter/material.dart';
+import 'package:app_book_store/pages/cart_page.dart';
+
+double totalAmount = 0.0;
+List<int> pcount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 class DetailPage extends StatefulWidget {
-  final FoodModel data;
+  final BookModel data;
+  //
   DetailPage(this.data);
+
   @override
   _DetailPageState createState() => _DetailPageState();
 }
@@ -14,13 +20,13 @@ class _DetailPageState extends State<DetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.brownColor,
+      backgroundColor: widget.data.color, //AppColors.brownColor,
       body: Column(
         children: <Widget>[
-          SizedBox(height: 25),
+          SizedBox(height: 20),
           _customAppBar(),
           Container(
-            height: 270,
+            height: 250,
             width: MediaQuery.of(context).size.width,
             child: Stack(
               children: <Widget>[
@@ -59,7 +65,7 @@ class _DetailPageState extends State<DetailPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
@@ -75,17 +81,7 @@ class _DetailPageState extends State<DetailPage> {
                       _buildCounter(),
                     ],
                   ),
-                  SizedBox(height: 16),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: <Widget>[
-                  //     _buildInfo("Weight", "${widget.data.weight.toInt()}gm"),
-                  //     _buildInfo(
-                  //         "Calories", "${widget.data.calory.toInt()}ccal"),
-                  //     _buildInfo("Protein", "${widget.data.protein.toInt()}gm"),
-                  //   ],
-                  // ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 2),
                   Text(
                     "Synopsis",
                     style: TextStyle(
@@ -95,31 +91,6 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                   SizedBox(height: 8),
                   Text("${widget.data.item}"),
-                  Expanded(child: SizedBox()),
-                  // Row(
-                  //   children: <Widget>[
-                  //     Expanded(
-                  //       child: ElevatedButton(
-                  //         onPressed: () {},
-                  //         style: ElevatedButton.styleFrom(
-                  //           padding: EdgeInsets.symmetric(vertical: 7),
-                  //           primary: AppColors.greenColor,
-                  //           shape: RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.all(
-                  //               Radius.circular(18),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         child: Text(
-                  //           "Add to Cart",
-                  //           style: TextStyle(
-                  //             fontSize: 28,
-                  //           ),
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // )
                 ],
               ),
             ),
@@ -127,13 +98,19 @@ class _DetailPageState extends State<DetailPage> {
         ],
       ),
       bottomNavigationBar: Container(
-        padding: EdgeInsets.symmetric(vertical: 13, horizontal: 13),
+        padding: EdgeInsets.only(bottom: 13, left: 13, right: 13),
         color: Colors.white,
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            setState(() {
+              totalAmount += widget.data.price;
+              //totalAmount = roundDouble(totalAmount, 2);
+              pcount[widget.data.id - 1]++;
+            });
+          },
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.symmetric(vertical: 13),
-            primary: AppColors.brownColor,
+            primary: widget.data.color,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(
                 Radius.circular(18),
@@ -148,28 +125,6 @@ class _DetailPageState extends State<DetailPage> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildInfo(String title, String val) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          "$val",
-          style: TextStyle(
-            fontSize: 16,
-            color: AppColors.redColor,
-          ),
-        ),
-      ],
     );
   }
 
@@ -197,17 +152,29 @@ class _DetailPageState extends State<DetailPage> {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.all(
-                Radius.circular(12),
+          SizedBox(width: 16),
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => Purchase(),
+                ),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(12),
+                ),
               ),
-            ),
-            child: Icon(
-              FlutterIconsHome.shop,
-              size: 16,
+              child: Center(
+                child: Icon(
+                  FlutterIconsHome.shop,
+                  size: 16,
+                ),
+              ),
             ),
           ),
         ],
@@ -218,7 +185,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget _buildCounter() {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.brownColor.withOpacity(.5),
+        color: widget.data.color.withOpacity(.5),
         borderRadius: BorderRadius.all(
           Radius.circular(12),
         ),
