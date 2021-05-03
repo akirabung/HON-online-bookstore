@@ -1,8 +1,11 @@
 # HON Online Bookstore
+# ITCS424 Wireless and Mobile Computing
 
 ## Members
 Kanrawee Chimsakul 6188049
+
 Tharit Chantanalertvilai 6188068
+
 Sarit Opaspakornkij 6188081
 
 ## Getting Started
