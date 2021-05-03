@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "378561625536",
+    "project_id": "hon-app-63054",
+    "storage_bucket": "hon-app-63054.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:378561625536:android:e18e1d88bd4f60b3035c25",
+        "android_client_info": {
+          "package_name": "com.hon.app_book_store"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "378561625536-las902dfejnj4hdmdpl8agn6qdcqv34a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMJz4PbdDkw4CqEKHQtUk5z_aj5A6r61c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "378561625536-las902dfejnj4hdmdpl8agn6qdcqv34a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
