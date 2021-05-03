@@ -1,6 +1,9 @@
-# app_book_store
+# HON Online Bookstore
 
-A new Flutter project.
+## Members
+Kanrawee Chimsakul 6188049
+Tharit Chantanalertvilai 6188068
+Sarit Opaspakornkij 6188081
 
 ## Getting Started
 
